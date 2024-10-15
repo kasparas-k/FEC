@@ -10,8 +10,8 @@
 #include <pcl/PointIndices.h>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include "FEC.h"
+// #include <pcl/visualization/pcl_visualizer.h>
+#include "FEC.hpp"
 using namespace std;
 using namespace chrono;
 
@@ -43,7 +43,7 @@ int main() {
    
 
     //visualization
-    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("Result of segement"));
+    // pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("Result of segement"));
     vector<unsigned char>color;
     for (int i_segment = 0; i_segment < cluster_indices.size(); i_segment++)
     {
@@ -68,8 +68,8 @@ int main() {
         color_index++;
     }
     std::stringstream ss;
-    viewer->addPointCloud(color_point);
-    viewer->spin();
+    // viewer->addPointCloud(color_point);
+    // viewer->spin();
 
 
     return 0;

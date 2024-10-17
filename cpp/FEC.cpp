@@ -4,7 +4,7 @@ bool NumberTag(const PointIndex_NumberTag& p0, const PointIndex_NumberTag& p1) {
     return p0.nNumberTag < p1.nNumberTag;
 }
 
-std::vector<pcl::PointIndices> FEC(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int min_component_size, double tolorance, int max_n) {
+std::vector<pcl::PointIndices> FEC(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int min_component_size, double tolerance, int max_n) {
 
     unsigned long i, j;
     if (cloud->size() < min_component_size)
@@ -33,10 +33,10 @@ std::vector<pcl::PointIndices> FEC(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, in
         {
             pointIdx.clear();
             pointquaredDistance.clear();
-            cloud_kdtreeflann.radiusSearch(cloud->points[i], tolorance, pointIdx, pointquaredDistance, max_n);
+            cloud_kdtreeflann.radiusSearch(cloud->points[i], tolerance, pointIdx, pointquaredDistance, max_n);
             /**
             * All neighbors closest to a specified point with a query within a given radius
-            * para.tolorance is the radius of the sphere that surrounds all neighbors
+            * para.tolerance is the radius of the sphere that surrounds all neighbors
             * pointIdx is the resulting index of neighboring points
             * pointquaredDistance is the final square distance to adjacent points
             * pointIdx.size() is the maximum number of neighbors returned by limit

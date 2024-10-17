@@ -1,16 +1,19 @@
 #pragma once
 #pragma warning(disable:4996)
 
+#include <ctime>
+#include <iostream>
+#include <omp.h>
+#include <vector>
+
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
-#include <iostream>
+#include <pcl/io/ply_io.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/segmentation/extract_clusters.h>
-#include <vector>
-#include <pcl/io/ply_io.h>
-#include <ctime>
-#include <omp.h>
+#include <pcl/PointIndices.h>
+
 using namespace std;
 
 /**
@@ -23,4 +26,4 @@ struct PointIndex_NumberTag
 };
 
 bool NumberTag(const PointIndex_NumberTag& p0, const PointIndex_NumberTag& p1);
-std::vector<pcl::PointIndices> FEC(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int min_component_size, double tolorance, int max_n);
+std::vector<pcl::PointIndices> FEC(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int min_component_size, double tolerance, int max_n);

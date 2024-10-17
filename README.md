@@ -1,97 +1,72 @@
-![FEC slogan][image-1]
 # FEC: Fast Euclidean Clustering for Point Cloud Segmentation
 
-[![Open In Colab][image-2]][1]  [![Binder][image-3]][2]
-
-<p>
-	<a href="https://github.com/sindresorhus/123"><img src="https://camo.githubusercontent.com/abb97269de2982c379cbc128bba93ba724d8822bfbe082737772bd4feb59cb54/68747470733a2f2f63646e2e7261776769742e636f6d2f73696e647265736f726875732f617765736f6d652f643733303566333864323966656437386661383536353265336136336531353464643865383832392f6d656469612f62616467652e737667"></a>
-	<a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://camo.githubusercontent.com/bca967b18143b8a5b2ffe78bd4a1a30f6bc21de83bd8336f748e96498af38b38/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d43432532304259253230342e302d6c69676874677265792e737667"></a>
-	<a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://camo.githubusercontent.com/33126b4770aa6f169b2a93e75678d52647f19972fa8d205e478049966e3b1a07/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f646f63732d737461626c652d627269676874677265656e2e7376673f7374796c653d666c6174266c6f6e6743616368653d74727565"></a>
-	<a href="https://github.com/allegroai/clearml"><img src="https://camo.githubusercontent.com/f60861e75a851f69a1fb8a5c671ef233147b7781a13dae226dcc2c32166654c0/68747470733a2f2f696d672e736869656c64732e696f2f707970692f707976657273696f6e732f636c6561726d6c2e737667"></a>
-</p>
-
-<p align="center">[English] / <a href="./README_CN.md">简体中文</a></p>
-
-This is the _official_ repository for _**FEC**_.
-
-Code repository locate permanently at [here][3].
-
-**THIS REPOSITORY IN UNDER DAILY UPDATING!**
-
-Segmentation from point cloud data is essential in many applications ,such as remote sensing, mobile robots, or autonomous cars. However, the point clouds captured by the 3D range sensor are commonly sparse and unstructured, challenging efficient segmentation. A fast solution for point cloud instance segmentation with small computational demands is lacking. To this end, we propose a novel fast Euclidean clustering (FEC) algorithm which applies a point-wise scheme over the cluster-wise scheme used in existing works. The proposed method avoids traversing every point constantly in each nested loop, which is time and memory-consuming. Our approach is conceptually simple, easy to implement (40 lines in C++), and achieves two orders of magnitudes faster against the classical segmentation methods while producing high-quality results.
-
-## Table of Contents
-
-- [Background][4]
-- [Prerequisites][5]
-- [Installation][6]
-- [Data][7]
-- [Examples][8]
-	- [C++ code example][9]
-	- [Python code example][10]
-	- [Matlab code example][11]
-- [Citation][12]
-- [Maintainers][13]
-
-## Background
+This is a **fork** of the official repository for _**FEC**_. The main goal of this repository is to provide Python bindings of the performant C++ code for easy integration with existing Python workflows.
 
 ## Prerequisites
 
-In order to apply the _**FEC**_ to varies programming language environment, we provide _C++_, _Python_, and _Matlab_ style codes for implementation.
-### C++ environment
-### Python environment
-The recommended way is to use Mini-/Anaconda and to create a new environment using:
-```sh
-$ conda env create -f environment.yml
+You'll need to be able to compile c++ code with `cmake` and `make`:
+
+```bash
+sudo apt install cmake make g++
+```
+
+This code depends on C++ libraries:
+
+- [Boost](https://www.boost.org/)
+- [Eigen3](https://eigen.tuxfamily.org/)
+- [PCL](https://pointclouds.org/)
+- [pybind11](https://github.com/pybind/pybind11)
+
+It is recommended to install these dependencies with `conda`, as the package versions in `apt` are outdated, and vary between by distribution:
+```bash
+conda install -c conda-forge boost eigen pcl=1.14.1 pybind11
 ```
 
 ## Installation
 
-### C++ installation
-If you are interested in building everything locally, it is recommended using [Docker][14]. To build, simply run:
-```sh
-$ make build
+This is intended to be added as another package in your existing Point Cloud processing environments that meet the prerequisites (see the section above).
+
+In a pre-existing environment, the package can be installed directly from GitHub:
+```bash
+pip install git+https://github.com/kasparas-k/FEC.git
 ```
 
-### Python installation
-There are two ways how you can install _**FEC**_: Editable or non-editable. If all you want to do is run experiments with existing datasets and existing models, you can use the non-editable installation. To install the latest release from PyPI:
-```sh
-$ pip install fec(not registered yet)
-```
-To install the package directly from the current master branch of this repository, including any changes that are not yet part of a release, run:
-```sh
-$ pip install git+https://github.com/YizhenLAO/FEC.git
-```
-If you want to try implementing your own models or datasets, you’ll need an editable installation. For this, start by downloading or cloning the repository to your local machine. If you use git, you can run:
-```sh
-$ git clone https://github.com/YizhenLAO/FEC.git
-```
-If you don’t know git, you can also download the code from [here][15] and extract the zip-file.
-After you cloned or downloaded the zip-file, you’ll end up with a directory called “fec” (or “fec-master”). Next, we’ll go to that directory and install a local, editable copy of the package:
-```sh
-$ cd fec
-$ pip install -e .
+Or by cloning the repository:
+```bash
+git clone https://github.com/kasparas-k/FEC.git
+cd FEC
+pip install .
 ```
 
-## Data
-
-Please download demo data from:
-
-[Google Drive][16] or [Baidu Netdisk ][17]
 ## Examples
 
-### C++ code example
+Example of a short program using [laspy](https://github.com/laspy/laspy) to read a `.las` file, cluster all points belonging to class `3`, and write the output:
 
-### Python code example
+```python
+import laspy
+import numpy as np
 
-### Matlab code example
+from fec import FEC
+
+las = laspy.read('path/to/pointcloud.las')
+las.points = las.points[las.classification == 3]
+
+cluster_indices = FEC(las.xyz, min_component_size=50, tolerance=0.5, max_n=50)
+
+las.add_extra_dim(laspy.ExtraBytesParams(
+    name="clusterID",
+    type=np.int32,
+))
+las.clusterID = np.array(cluster_indices)
+
+las.write('path/to/output.las')
+```
 
 ## Citation
 
-In case you use _**FEC**_ in your research or work, it would be highly appreciated if you include a reference to our [paper]() in any kind of publication.
+In case you use _**FEC**_ in your research or work, it would be highly appreciated if you include a reference to the original authors [paper](https://arxiv.org/abs/2208.07678) in any kind of publication.
 
-> latex
-```latex
+```bibtex
 @Article{cao2022fec,
   AUTHOR = {Cao, Yu and Wang, Yancheng and Xue, Yifei and Zhang, Huiqing and Lao, Yizhen},
   TITLE = {FEC: Fast Euclidean Clustering for Point Cloud Segmentation},
@@ -107,38 +82,6 @@ In case you use _**FEC**_ in your research or work, it would be highly appreciat
 }
 ```
 
-## Maintainers
-
-[@YizhenLAO][19]
-[@IfeiHsueh][20]
-[@Cyy-caoyu][21]
-
 ## License
 
-[MIT]()(LICENSE) © Yizhen LAO
-
-[1]:	https://colab.research.google.com/github/bipinKrishnan/fastai_course/blob/master/bear_classifier.ipynb
-[2]:	https://mybinder.org/v2/gh/bipinKrishnan/fastai_course/master
-[3]:	https://github.com/YizhenLAO/FEC
-[4]:	#background
-[5]:	#prerequisites
-[6]:	#installation
-[7]:	#data
-[8]:	#examples
-[9]:	#c-code-example
-[10]:	python-code-example
-[11]:	#matlab-code-example
-[12]:	#citation
-[13]:	#maintainers
-[14]:	https://docs.docker.com/get-docker/
-[15]:	https://github.com/YizhenLAO/FEC/archive/refs/heads/master.zip
-[16]:	https://drive.google.com/drive/folders/1bo3eZW3AwYr3ael_BS5a6Ear7DZ3jb2D?usp=share_link
-[17]:	https://pan.baidu.com/s/1y9b5NwF0XC0RqcfKWzSRKQ?pwd=qtbe
-[19]:	https://github.com/YizhenLAO
-[20]:	https://github.com/IfeiHsueh
-[21]:	https://github.com/Cyy-caoyu
-
-
-[image-1]:	./images/slogan.png
-[image-2]:	https://colab.research.google.com/assets/colab-badge.svg
-[image-3]:	https://mybinder.org/badge_logo.svg
+MIT © Yizhen LAO

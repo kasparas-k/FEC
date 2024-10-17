@@ -35,7 +35,7 @@ std::vector<int> FEC_py(std::vector<float> xyz, int min_component_size, double t
 }
 
 
-PYBIND11_MODULE(fec, m) {
-  m.def("FEC", &FEC_py, "FEC algorithm",
+PYBIND11_MODULE(_fec, m) {
+  m.def("_FEC", &FEC_py, "FEC algorithm",
         py::arg("xyz"), py::arg("min_component_size"), py::arg("tolerance"), py::arg("max_n"));
 }

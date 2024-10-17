@@ -16,8 +16,8 @@ include_directories(
 )
 link_directories(${PCL_LIBRARY_DIRS})
 
-pybind11_add_module(fec MODULE FEC_py.cpp FEC.cpp)
-target_link_libraries(fec
+pybind11_add_module(_fec MODULE src/FEC_py.cpp src/FEC.cpp)
+target_link_libraries(_fec
     PRIVATE pybind11::module
     Eigen3::Eigen
     ${PCL_LIBRARIES}

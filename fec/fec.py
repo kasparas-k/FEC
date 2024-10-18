@@ -18,4 +18,4 @@ def FEC(xyz, min_component_size, tolerance, max_n):
     Reference:
         https://arxiv.org/abs/2208.07678
     """
-    return _FEC(list(np.flatten(xyz)), min_component_size, tolerance, max_n)
+    return _FEC(list(xyz.flatten()), min_component_size, tolerance, max_n)
